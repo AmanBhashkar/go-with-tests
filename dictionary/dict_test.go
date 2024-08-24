@@ -53,7 +53,13 @@ func TestAdd(t *testing.T) {
 		err := dict.Add(word, "new test")
 		assertError(t, err, ErrWordExists)
 		assertDefinition(t, dict, word, def)
-
+	})
+	t.Run("new word", func(t *testing.T) {
+		word := "test"
+		def := "this is a test"
+		dict := MyDict{}
+		err := dict.Update(word, def)
+		assertError(t, err, ErrWordDoesNotExist)
 	})
 }
 
@@ -64,4 +70,22 @@ func assertDefinition(t testing.TB, dict MyDict, word, def string) {
 		t.Fatal("should find added word: ", err)
 	}
 	assertStrings(t, got, def)
+}
+
+func TestUpdate(t *testing.T) {
+	word := "test"
+	def := "this is a test"
+	dict := MyDict{word: def}
+
+	newDef := "new definition"
+	dict.Update(word, newDef)
+	assertDefinition(t, dict, word, newDef)
+}
+
+func TestDelete(t *testing.T) {
+	word := "test"
+	dict := MyDict{word: "test definition"}
+	dict.Delete(word)
+	_, err := dict.Search(word)
+	assertError(t, err, ErrNotFound)
 }
